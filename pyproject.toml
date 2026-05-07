@@ -4,4 +4,9 @@ version = "0.1.0"
 description = "A Discord bot to automatically transfer messages from Discord to Google Sheets for the Philippine Collegian's live blogs"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "discord-py>=2.7.1",
+    "google-api-python-client>=2.196.0",
+    "google-auth>=2.51.0",
+    "python-dotenv>=1.2.2",
+]
