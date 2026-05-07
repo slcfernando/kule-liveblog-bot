@@ -1,0 +1,7 @@
+[project]
+name = "kule-liveblog-bot"
+version = "0.1.0"
+description = "A Discord bot to automatically transfer messages from Discord to Google Sheets for the Philippine Collegian's live blogs"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
