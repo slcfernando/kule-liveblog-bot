@@ -47,12 +47,12 @@ def create_sheet(service: Resource, sheet_title: str):
     return response
 
 def initialize_sheet(service: Resource, sheet_title: str, forum_link: str):
-    CELL_RANGE = f"'{sheet_title}'!A1:H4"
+    CELL_RANGE = f"'{sheet_title}'!A1:I4"
     VALUES = [
         [f'{sheet_title}'],
         ['DATE', f'{datetime.datetime.now().strftime("%d/%m/%Y")}'],
         ['FORUM LINK', forum_link],
-        ['Entry ID', 'Message Link', 'Timestamp', 'Last Edited', 'Author', 'Raw Post', 'Edited Post', 'Status']
+        ['Entry ID', 'Message Link', 'Timestamp', 'Last Edited', 'Author', 'Raw Post', 'Edited Post', 'Status', 'Notes']
     ]
 
     response = service.spreadsheets().values().update(
