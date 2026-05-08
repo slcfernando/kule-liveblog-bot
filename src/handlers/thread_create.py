@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from discord import Client, Thread
-from discord.channel import ForumChannel
 from googleapiclient.discovery import Resource
 
 from services import sheets
