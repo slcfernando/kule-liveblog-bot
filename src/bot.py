@@ -1,35 +1,25 @@
 import discord
 import os
 from dotenv import load_dotenv
+from handlers import thread_create
 
-# Setup bot token
+# Setup bot
 load_dotenv()
-
 BOT_TOKEN = os.getenv('BOT_TOKEN')
+# if BOT_TOKEN is not str:
+#     raise ValueError('BOT_TOKEN not in .env file')
 
 intents = discord.Intents.default()
 intents.message_content = True
-
 client = discord.Client(intents=intents)
 
+# When bot is ready
 @client.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+    print(f'{client.user} is ready for live blogging')
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+if __name__ == '__main__':
+    # Setup client using setup functions of each handler
+    thread_create.setup(client)
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello world!')
-
-@client.event
-async def on_thread_create(thread):
-    print(thread)
-    print(type(thread))
-    print(thread.parent)
-    print(thread.parent.name)
-    print(thread.parent.name == 'kule-liveblog-bot-test')
-
-client.run(BOT_TOKEN)
+    client.run(BOT_TOKEN)

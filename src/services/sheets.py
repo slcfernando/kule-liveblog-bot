@@ -21,9 +21,7 @@ def connect_to_sheets_api() -> Resource:
     service = build('sheets', 'v4', credentials=creds)
     return service
 
-def create_sheet(title: str):
-    service = connect_to_sheets_api()
-
+def create_sheet(service: Resource, title: str):
     body = {
         'requests': [
             {
