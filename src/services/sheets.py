@@ -1,4 +1,5 @@
 import os
+import datetime
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build, Resource
@@ -19,15 +20,16 @@ def connect_to_sheets_api() -> Resource:
         scopes=SCOPES
     )
     service = build('sheets', 'v4', credentials=creds)
+    print('Completed setup of Google Sheets API')
     return service
 
-def create_sheet(service: Resource, title: str):
+def create_sheet(service: Resource, sheet_title: str):
     body = {
         'requests': [
             {
                 'addSheet': {
                     'properties': {
-                        'title': title,
+                        'title': sheet_title,
                         'index': 0
                     }
                 }
@@ -39,5 +41,29 @@ def create_sheet(service: Resource, title: str):
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         body=body
     ).execute()
+
+    print(f'Created new sheet: {response = }')
+
+    return response
+
+def initialize_sheet(service: Resource, sheet_title: str, forum_link: str):
+    CELL_RANGE = f'{sheet_title}!A1:H4'
+    VALUES = [
+        [f'{sheet_title}'],
+        ['DATE', f'{datetime.datetime.now().strftime("%d/%m/%Y")}'],
+        ['FORUM LINK', forum_link],
+        ['Entry ID', 'Message Link', 'Timestamp', 'Last Edited', 'Author', 'Raw Post', 'Edited Post', 'Status']
+    ]
+
+    response = service.spreadsheets().values().update(
+        spreadsheetId=GOOGLE_SPREADSHEET_ID,
+        range=CELL_RANGE,
+        valueInputOption='USER_ENTERED',
+        body={
+           'values': VALUES 
+        }
+    ).execute()
+
+    print(f'Initialized sheet: {response = }')
 
     return response
