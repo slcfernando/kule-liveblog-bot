@@ -14,7 +14,7 @@ SCOPES = (
     'https://www.googleapis.com/auth/spreadsheets',
     )
 
-def connect_to_sheets_api() -> Resource:
+def authenticate_sheets_api() -> Resource:
     creds = service_account.Credentials.from_service_account_file(
         GOOGLE_SHEETS_API_JSON_FILE_PATH,
         scopes=SCOPES

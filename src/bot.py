@@ -3,15 +3,17 @@ import os
 from dotenv import load_dotenv
 from handlers import thread_create
 
+from services import sheets
+
 # Setup bot
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-# if BOT_TOKEN is not str:
-#     raise ValueError('BOT_TOKEN not in .env file')
-
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
+
+# Connect to Google Sheets API
+service = sheets.authenticate_sheets_api()
 
 # When bot is ready
 @client.event
@@ -20,6 +22,6 @@ async def on_ready():
 
 if __name__ == '__main__':
     # Setup client using setup functions of each handler
-    thread_create.setup(client)
+    thread_create.setup(client, service)
 
     client.run(BOT_TOKEN)
