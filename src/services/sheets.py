@@ -1,5 +1,6 @@
 import os
 import datetime
+from discord import Message
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build, Resource
@@ -52,7 +53,7 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str):
         [f'{sheet_title}'],
         ['DATE', f'{datetime.datetime.now().strftime("%d/%m/%Y")}'],
         ['FORUM LINK', forum_link],
-        ['Timestamp', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Status', 'Notes']
+        ['Timestamp Created', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Status', 'Notes']
     ]
 
     response = service.spreadsheets().values().update(
@@ -65,5 +66,33 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str):
     ).execute()
 
     print(f'Initialized sheet: {response = }')
+
+    return response
+
+def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
+    # ['Timestamp', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Status', 'Notes']
+    # TODO: Handle editing, deletion, status
+    CELL_RANGE = f"'{sheet_title}'!A1"
+    VALUES = [
+        [message.created_at.strftime("%Y-%m-%d %H:%M:%S.%f"),
+         message.edited_at.strftime("%Y-%m-%d %H:%M:%S.%f") if message.edited_at else '',
+         message.jump_url,
+         message.author.name,
+         message.content,
+         '',
+         'STATUS?',
+         '']
+    ]
+
+    response = service.spreadsheets().values().append(
+        spreadsheetId=GOOGLE_SPREADSHEET_ID,
+        range=CELL_RANGE,
+        valueInputOption='USER_ENTERED',
+        body={
+           'values': VALUES 
+        }
+    ).execute()
+
+    print(f'Added entry to sheet: {response = }')
 
     return response

@@ -1,7 +1,7 @@
 import discord
 import os
 from dotenv import load_dotenv
-from handlers import thread_create
+from handlers import thread_create, message_create
 
 from services import sheets
 
@@ -23,5 +23,6 @@ async def on_ready():
 if __name__ == '__main__':
     # Setup client using setup functions of each handler
     thread_create.setup(client, service)
+    message_create.setup(client, service)
 
     client.run(BOT_TOKEN)
