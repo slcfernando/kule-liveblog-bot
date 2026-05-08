@@ -24,4 +24,12 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello world!')
 
+@client.event
+async def on_thread_create(thread):
+    print(thread)
+    print(type(thread))
+    print(thread.parent)
+    print(thread.parent.name)
+    print(thread.parent.name == 'kule-liveblog-bot-test')
+
 client.run(BOT_TOKEN)
