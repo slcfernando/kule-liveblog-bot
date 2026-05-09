@@ -43,45 +43,101 @@ def create_sheet(service: Resource, sheet_title: str):
         body=body
     ).execute()
 
-    print(f'Created new sheet: {response = }')
+    print(f'Created new sheet')
 
-    return response
+    return response['replies'][0]['addSheet']['properties']['sheetId']
 
-def initialize_sheet(service: Resource, sheet_title: str, forum_link: str):
-    CELL_RANGE = f"'{sheet_title}'!A1:H4"
+def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet_id: int):
+    FULL_CELL_RANGE = f"'{sheet_title}'!A1:H4"
     VALUES = [
         [f'{sheet_title}'],
         ['DATE', f'{datetime.datetime.now().strftime("%d/%m/%Y")}'],
         ['FORUM LINK', forum_link],
-        ['Timestamp Created', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Status', 'Notes']
+        ['Timestamp Created', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Notes', 'Status']
     ]
 
-    response = service.spreadsheets().values().update(
+    # Add metadata and column headers
+    service.spreadsheets().values().update(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
-        range=CELL_RANGE,
+        range=FULL_CELL_RANGE,
         valueInputOption='USER_ENTERED',
         body={
            'values': VALUES 
         }
     ).execute()
 
-    print(f'Initialized sheet: {response = }')
+    # Make post and notes columns wider and wrap around; make status column a dropdown
+    service.spreadsheets().batchUpdate(
+        spreadsheetId=GOOGLE_SPREADSHEET_ID,
+        body={
+            'requests': [
+                {
+                    'updateDimensionProperties': {
+                        'range': {
+                            'sheetId': sheet_id,
+                            'dimension': 'COLUMNS',
+                            'startIndex': 4,
+                            'endIndex': 7
+                        },
+                        'properties': {
+                            'pixelSize': 400
+                        },
+                        'fields': 'pixelSize'
+                    }
+                },
+                {
+                    'repeatCell': {
+                        'range': {
+                            'sheetId': sheet_id,
+                            'startColumnIndex': 4,
+                            'endColumnIndex': 7,
+                        },
+                        'cell': {
+                            'userEnteredFormat': {
+                                'wrapStrategy': 'WRAP'
+                            }
+                        },
+                        'fields': 'userEnteredFormat.wrapStrategy'
+                    }
+                },
+                {
+                    'setDataValidation': {
+                        'range': {
+                            'sheetId': sheet_id,
+                            'startColumnIndex': 7,
+                            'endColumnIndex': 8,
+                            'startRowIndex': 4,
+                            'endRowIndex': 100
+                        },
+                        'rule': {
+                            'condition': {
+                                'type': 'ONE_OF_LIST',
+                                'values': [{'userEnteredValue': option} for option in ('FOR EDITING', 'FOR POSTING', 'POSTED')]
+                            },
+                            'showCustomUi': True,
+                            'strict': True,
+                            'inputMessage': 'Status'
+                        }
+                    }
+                }
+            ]
+        }
+    ).execute()
 
-    return response
+    print(f'Initialized sheet')
 
 def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
     # ['Timestamp', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Status', 'Notes']
     # TODO: Handle editing, deletion, status
     CELL_RANGE = f"'{sheet_title}'!A1"
     VALUES = [
-        [message.created_at.strftime("%Y-%m-%d %H:%M:%S.%f"),
-         message.edited_at.strftime("%Y-%m-%d %H:%M:%S.%f") if message.edited_at else '',
-         message.jump_url,
-         message.author.name,
-         message.content,
-         '',
-         'STATUS?',
-         '']
+        [
+            message.created_at.strftime('%H:%M:%S.%f'),
+            message.edited_at.strftime('%H:%M:%S.%f') if message.edited_at else '',
+            message.jump_url,
+            message.author.name,
+            message.content
+        ]
     ]
 
     response = service.spreadsheets().values().append(
@@ -93,6 +149,4 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
         }
     ).execute()
 
-    print(f'Added entry to sheet: {response = }')
-
-    return response
+    print(f'Added entry to sheet')
