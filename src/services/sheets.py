@@ -1,9 +1,12 @@
 import os
 import datetime
+from zoneinfo import ZoneInfo
 from discord import Message
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build, Resource
+
+MANILA_TIMEZONE = ZoneInfo('Asia/Manila')
 
 # Get environment variables needed for Google Sheets API
 load_dotenv()
@@ -51,7 +54,7 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
     FULL_CELL_RANGE = f"'{sheet_title}'!A1:H4"
     VALUES = [
         [f'{sheet_title}'],
-        ['DATE', f'{datetime.datetime.now().strftime("%d/%m/%Y")}'],
+        ['DATE', f'{datetime.datetime.now().astimezone(MANILA_TIMEZONE).strftime("%d/%m/%Y")}'],
         ['FORUM LINK', forum_link],
         ['Timestamp Created', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Notes', 'Status']
     ]
@@ -132,8 +135,8 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
     CELL_RANGE = f"'{sheet_title}'!A1"
     VALUES = [
         [
-            message.created_at.strftime('%H:%M:%S.%f'),
-            message.edited_at.strftime('%H:%M:%S.%f') if message.edited_at else '',
+            message.created_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f'),
+            message.edited_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f') if message.edited_at else '',
             message.jump_url,
             message.author.name,
             message.content

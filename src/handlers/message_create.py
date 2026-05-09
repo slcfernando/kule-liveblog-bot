@@ -15,7 +15,7 @@ def setup(client: Client, service: Resource):
         # Ignore messages not sent in a live blog forum post (which is a thread)
         channel = message.channel
         if not channel or not channel.parent or channel.parent.name != LIVE_BLOG_FORUM_NAME:
-            print(f'The message was sent in {channel.parent.name} and not {LIVE_BLOG_FORUM_NAME}')
+            print(f'Message not sent in {LIVE_BLOG_FORUM_NAME}')
             return
     
         try:        
