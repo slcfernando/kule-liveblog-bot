@@ -1,13 +1,10 @@
 import discord
-import os
-from dotenv import load_dotenv
 from handlers import thread_create, message_create
 
 from services import sheets
+from utils.config import BOT_TOKEN
 
 # Setup bot
-load_dotenv()
-BOT_TOKEN = os.getenv('BOT_TOKEN')
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)

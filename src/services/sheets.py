@@ -1,18 +1,12 @@
-import os
 import datetime
 from zoneinfo import ZoneInfo
 from discord import Message
-from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build, Resource
 
+from utils.config import GOOGLE_SHEETS_API_JSON_FILE_PATH, GOOGLE_SPREADSHEET_ID
+
 MANILA_TIMEZONE = ZoneInfo('Asia/Manila')
-
-# Get environment variables needed for Google Sheets API
-load_dotenv()
-
-GOOGLE_SHEETS_API_JSON_FILE_PATH = os.getenv('GOOGLE_SHEETS_API_JSON_FILE_PATH')
-GOOGLE_SPREADSHEET_ID = os.getenv('GOOGLE_SPREADSHEET_ID')
 
 SCOPES = (
     'https://www.googleapis.com/auth/spreadsheets',
@@ -130,7 +124,6 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
     print(f'Initialized sheet')
 
 def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
-    # ['Timestamp', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Status', 'Notes']
     # TODO: Handle editing, deletion, status
     CELL_RANGE = f"'{sheet_title}'!A1"
     VALUES = [
@@ -143,7 +136,7 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
         ]
     ]
 
-    response = service.spreadsheets().values().append(
+    service.spreadsheets().values().append(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         range=CELL_RANGE,
         valueInputOption='USER_ENTERED',

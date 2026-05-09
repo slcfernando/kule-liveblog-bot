@@ -1,12 +1,8 @@
-import os
-from dotenv import load_dotenv
 from discord import Client, Thread
 from googleapiclient.discovery import Resource
 
 from services import sheets
-
-load_dotenv()
-LIVE_BLOG_FORUM_NAME = os.getenv('LIVE_BLOG_FORUM_NAME')
+from utils.config import LIVE_BLOG_FORUM_NAME
 
 def setup(client: Client, service: Resource):
     @client.event

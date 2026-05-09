@@ -1,16 +1,17 @@
 import os
-from dotenv import load_dotenv
 from discord import Client, Message
 from googleapiclient.discovery import Resource
 
 from services import sheets
-
-load_dotenv()
-LIVE_BLOG_FORUM_NAME = os.getenv('LIVE_BLOG_FORUM_NAME')
+from utils.config import LIVE_BLOG_FORUM_NAME
 
 def setup(client: Client, service: Resource):
     @client.event
     async def on_message(message: Message):
+        # Ignore messages sent by the bot itself.
+        if message.author == client.user:
+            return
+        
         print(f'A message was sent: {message}')
         # Ignore messages not sent in a live blog forum post (which is a thread)
         channel = message.channel
