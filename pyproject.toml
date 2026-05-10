@@ -14,3 +14,8 @@ dependencies = [
 [tool.pyright]
 reportUnknownMemberType = "none"
 reportUnknownArgumentType = "none"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.12",
+]

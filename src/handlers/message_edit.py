@@ -17,7 +17,7 @@ def setup(client: Client, service: Resource):
         channel = after.channel
         if not (isinstance(channel, Thread) and
                 live.is_live_thread(channel.name)):
-            print(f'Message not sent in a [LIVE] forum post')
+            print('Message not sent in a [LIVE] forum post')
             return
     
         try:

@@ -43,7 +43,7 @@ def create_sheet(service: Resource, sheet_title: str):
         body=body
     ).execute()
 
-    print(f'Created new sheet')
+    print('Created new sheet')
 
     return response['replies'][0]['addSheet']['properties']['sheetId']
 
@@ -238,7 +238,7 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
         }
     ).execute()
 
-    print(f'Initialized sheet')
+    print('Initialized sheet')
 
 def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
     CELL_RANGE = f"'{sheet_title}'!A1"
@@ -265,7 +265,7 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
         }
     ).execute()
 
-    print(f'Added entry to sheet')
+    print('Added entry to sheet')
 
 def find_row_by_message_id(service: Resource, sheet_title: str, id_to_search: str) -> int | None:
     result = (service.spreadsheets()
