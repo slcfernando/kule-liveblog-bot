@@ -196,26 +196,25 @@ def edit_sheet_entry(service: Resource, sheet_title: str, message_id: str, new_m
         print('The row to edit in the spreadsheet does not exist.')
         return None
 
-    # Modify Last Edited column
-    service.spreadsheets().values().update(
+    service.spreadsheets().values().batchUpdate(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
-        range=f"'{sheet_title}'!C{row_to_edit}",
-        valueInputOption='USER_ENTERED',
         body={
-           'values': [
-               [f'{datetime.datetime.now().astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S')}']
-           ] 
-        }
-    ).execute()
-
-    # Modify Raw Post column
-    service.spreadsheets().values().update(
-        spreadsheetId=GOOGLE_SPREADSHEET_ID,
-        range=f"'{sheet_title}'!F{row_to_edit}",
-        valueInputOption='USER_ENTERED',
-        body={
-           'values': [
-               [new_message.content]
+            'valueInputOption': 'USER_ENTERED',
+            'data': [
+                # Modify Last Edited column
+                {
+                    'range': f"'{sheet_title}'!C{row_to_edit}",
+                    'values': [
+                        [f'{datetime.datetime.now().astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S')}']
+                    ]
+                },
+                # Modify Raw Post column
+                {
+                    'range': f"'{sheet_title}'!F{row_to_edit}",
+                    'values': [
+                        [new_message.content]
+                    ]
+                }
            ] 
         }
     ).execute()
