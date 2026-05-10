@@ -125,8 +125,8 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                     'repeatCell': {
                         'range': {
                             'sheetId': sheet_id,
-                            'startColumnIndex': 1,
-                            'endColumnIndex': 2,
+                            'startColumnIndex': 0,
+                            'endColumnIndex': 1,
                         },
                         'cell': {
                             'userEnteredFormat': {
