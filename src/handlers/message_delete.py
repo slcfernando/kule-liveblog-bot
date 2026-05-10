@@ -7,6 +7,10 @@ from utils import live
 def setup(client: Client, service: Resource):
     @client.event
     async def on_message_delete(message: Message):
+        # Ignore messages sent by the bot itself.
+        if message.author == client.user:
+            return
+        
         print(f'A message was deleted: {message}')
 
         # Ignore messages not sent in a live blog forum post (which is a thread)
