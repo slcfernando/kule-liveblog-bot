@@ -109,7 +109,7 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                         'rule': {
                             'condition': {
                                 'type': 'ONE_OF_LIST',
-                                'values': [{'userEnteredValue': option} for option in ('FOR EDITING', 'FOR POSTING', 'POSTED')]
+                                'values': [{'userEnteredValue': option} for option in ('FOR EDITING', 'FOR POSTING', 'POSTED', 'DELETED')]
                             },
                             'showCustomUi': True,
                             'strict': True,
