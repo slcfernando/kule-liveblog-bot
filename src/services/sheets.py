@@ -138,6 +138,99 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                         'fields': 'userEnteredFormat.numberFormat'
                     }
                 },
+                # Add color coding based on the status
+                {
+                    'addConditionalFormatRule': {
+                        'rule': {
+                            'ranges': [{
+                                'sheetId': sheet_id,
+                                'startRowIndex': 4,
+                                'endRowIndex': 1000,
+                                'startColumnIndex': 0,
+                                'endColumnIndex': 9
+                            }],
+                            'booleanRule': {
+                                'condition': {
+                                    'type': 'CUSTOM_FORMULA',
+                                    'values': [{'userEnteredValue': '=$I5="FOR EDITING"'}]
+                                },
+                                'format': {
+                                    'backgroundColor': {'red': 0.96, 'green': 0.86, 'blue': 0.57}
+                                }
+                            }
+                        },
+                        'index': 0
+                    }
+                },
+                {
+                    'addConditionalFormatRule': {
+                        'rule': {
+                            'ranges': [{
+                                'sheetId': sheet_id,
+                                'startRowIndex': 4,
+                                'endRowIndex': 1000,
+                                'startColumnIndex': 0,
+                                'endColumnIndex': 9
+                            }],
+                            'booleanRule': {
+                                'condition': {
+                                    'type': 'CUSTOM_FORMULA',
+                                    'values': [{'userEnteredValue': '=$I5="FOR POSTING"'}]
+                                },
+                                'format': {
+                                    'backgroundColor': {'red': 0.64, 'green': 0.76, 'blue': 0.96}
+                                }
+                            }
+                        },
+                        'index': 0
+                    }
+                },
+                {
+                    'addConditionalFormatRule': {
+                        'rule': {
+                            'ranges': [{
+                                'sheetId': sheet_id,
+                                'startRowIndex': 4,
+                                'endRowIndex': 1000,
+                                'startColumnIndex': 0,
+                                'endColumnIndex': 9
+                            }],
+                            'booleanRule': {
+                                'condition': {
+                                    'type': 'CUSTOM_FORMULA',
+                                    'values': [{'userEnteredValue': '=$I5="POSTED"'}]
+                                },
+                                'format': {
+                                    'backgroundColor': {'red': 0.72, 'green': 0.84, 'blue': 0.66}
+                                }
+                            }
+                        },
+                        'index': 0
+                    }
+                },
+                {
+                    'addConditionalFormatRule': {
+                        'rule': {
+                            'ranges': [{
+                                'sheetId': sheet_id,
+                                'startRowIndex': 4,
+                                'endRowIndex': 1000,
+                                'startColumnIndex': 0,
+                                'endColumnIndex': 9
+                            }],
+                            'booleanRule': {
+                                'condition': {
+                                    'type': 'CUSTOM_FORMULA',
+                                    'values': [{'userEnteredValue': '=$I5="DELETED"'}]
+                                },
+                                'format': {
+                                    'backgroundColor': {'red': 0.92, 'green': 0.6, 'blue': 0.6}
+                                }
+                            }
+                        },
+                        'index': 0
+                    }
+                },
             ]
         }
     ).execute()
