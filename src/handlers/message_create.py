@@ -3,6 +3,7 @@ from discord import Client, Message
 from googleapiclient.discovery import Resource
 
 from services import sheets
+from utils import live
 
 def setup(client: Client, service: Resource):
     @client.event
@@ -14,7 +15,7 @@ def setup(client: Client, service: Resource):
         print(f'A message was sent: {message}')
         # Ignore messages not sent in a live blog forum post (which is a thread)
         channel = message.channel
-        if not channel.name.strip().startswith('[LIVE]'):
+        if not live.is_live_thread(channel.name):
             print(f'Message not sent in a [LIVE] forum post')
             return
     
