@@ -129,10 +129,13 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
     VALUES = [
         [
             message.created_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f'),
-            message.edited_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f') if message.edited_at else '',
+            '',
             message.jump_url,
             message.author.name,
             message.content
+            '',
+            '',
+            'FOR EDITING'
         ]
     ]
 
