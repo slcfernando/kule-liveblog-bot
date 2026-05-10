@@ -104,7 +104,7 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                             'startColumnIndex': 7,
                             'endColumnIndex': 8,
                             'startRowIndex': 4,
-                            'endRowIndex': 100
+                            'endRowIndex': 1000
                         },
                         'rule': {
                             'condition': {
