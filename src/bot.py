@@ -14,12 +14,14 @@ client = discord.Client(intents=intents)
 # Connect to Google Sheets API
 service = sheets.authenticate_sheets_api()
 
+
 # When bot is ready
 @client.event
 async def on_ready():
-    print(f'{client.user} is ready for live blogging')
+    print(f"{client.user} is ready for live blogging")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Setup client using setup functions of each handler
     thread_create.setup(client, service)
     message_create.setup(client, service)
