@@ -3,7 +3,6 @@ from googleapiclient.discovery import Resource
 
 from services import sheets
 from utils import live
-from utils.config import GOOGLE_SPREADSHEET_ID
 
 def setup(client: Client, service: Resource):
     @client.event

@@ -1,4 +1,3 @@
-import os
 from discord import Client, Message
 from googleapiclient.discovery import Resource
 
