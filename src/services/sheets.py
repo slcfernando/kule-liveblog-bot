@@ -177,8 +177,12 @@ def find_row_by_message_id(service: Resource, sheet_title: str, id_to_search: st
                       .get(spreadsheetId=GOOGLE_SPREADSHEET_ID, range=f"{sheet_title}!A5:A")
                       .execute()
             )
+    rows = result.get('values', [])
+    if not rows:
+        print(f'No data rows yet in {sheet_title}')
+        return None
     
-    messageIds = [row[0] for row in result.get('values', [])]
+    messageIds = [row[0] for row in rows]
     for index, messageId in enumerate(messageIds):
         if messageId == id_to_search:
             # hardcoded 5, because the actual rows of data start from row 5
