@@ -45,12 +45,12 @@ def create_sheet(service: Resource, sheet_title: str):
     return response['replies'][0]['addSheet']['properties']['sheetId']
 
 def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet_id: int):
-    FULL_CELL_RANGE = f"'{sheet_title}'!A1:H4"
+    FULL_CELL_RANGE = f"'{sheet_title}'!A1:I4"
     VALUES = [
         [f'{sheet_title}'],
         ['DATE', f'{datetime.datetime.now().astimezone(MANILA_TIMEZONE).strftime("%d/%m/%Y")}'],
         ['FORUM LINK', forum_link],
-        ['Timestamp Created', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Notes', 'Status']
+        ['Message ID', 'Timestamp Created', 'Last Edited', 'Message Link', 'Author', 'Raw Post', 'Edited Post', 'Notes', 'Status']
     ]
 
     # Add metadata and column headers
@@ -73,8 +73,8 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                         'range': {
                             'sheetId': sheet_id,
                             'dimension': 'COLUMNS',
-                            'startIndex': 4,
-                            'endIndex': 7
+                            'startIndex': 5,
+                            'endIndex': 8
                         },
                         'properties': {
                             'pixelSize': 400
@@ -86,8 +86,8 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                     'repeatCell': {
                         'range': {
                             'sheetId': sheet_id,
-                            'startColumnIndex': 4,
-                            'endColumnIndex': 7,
+                            'startColumnIndex': 5,
+                            'endColumnIndex': 8,
                         },
                         'cell': {
                             'userEnteredFormat': {
@@ -101,8 +101,8 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                     'setDataValidation': {
                         'range': {
                             'sheetId': sheet_id,
-                            'startColumnIndex': 7,
-                            'endColumnIndex': 8,
+                            'startColumnIndex': 8,
+                            'endColumnIndex': 9,
                             'startRowIndex': 4,
                             'endRowIndex': 1000
                         },
@@ -124,18 +124,18 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
     print(f'Initialized sheet')
 
 def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
-    # TODO: Handle editing, deletion, status
     CELL_RANGE = f"'{sheet_title}'!A1"
     VALUES = [
         [
+            message.id,
             message.created_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f'),
             '',
             message.jump_url,
             message.author.name,
-            message.content
+            message.content,
             '',
             '',
-            'FOR EDITING'
+            'FOR EDITING',
         ]
     ]
 
@@ -149,3 +149,18 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
     ).execute()
 
     print(f'Added entry to sheet')
+
+# def edit_sheet_entry(service: Resource, sheet_title: str, message_id: int, new_message: Message):
+#     CELL_RANGE = f"'{sheet_title}'!A1"
+#     VALUES = [
+#         [
+#             message.created_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f'),
+#             '',
+#             message.jump_url,
+#             message.author.name,
+#             message.content
+#             '',
+#             '',
+#             'FOR EDITING'
+#         ]
+#     ]
