@@ -194,6 +194,7 @@ def edit_sheet_entry(service: Resource, sheet_title: str, message_id: str, new_m
     row_to_edit = find_row_by_message_id(service, sheet_title, message_id)
     if row_to_edit is None:
         print('The row to edit in the spreadsheet does not exist.')
+        return None
 
     # Modify Last Edited column
     service.spreadsheets().values().update(
