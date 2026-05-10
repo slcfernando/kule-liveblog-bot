@@ -1,5 +1,5 @@
 import discord
-from handlers import thread_create, message_create, message_edit
+from handlers import thread_create, message_create, message_edit, message_delete
 
 from services import sheets
 from utils.config import BOT_TOKEN
@@ -22,5 +22,6 @@ if __name__ == '__main__':
     thread_create.setup(client, service)
     message_create.setup(client, service)
     message_edit.setup(client, service)
+    message_delete.setup(client, service)
 
     client.run(BOT_TOKEN)
