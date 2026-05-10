@@ -1,4 +1,4 @@
-from discord import Client, Message
+from discord import Client, Message, Thread
 from googleapiclient.discovery import Resource
 
 from services import sheets
@@ -15,7 +15,8 @@ def setup(client: Client, service: Resource):
 
         # Ignore messages not sent in a live blog forum post (which is a thread)
         channel = message.channel
-        if not live.is_live_thread(channel.name):
+        if not (isinstance(channel, Thread) and
+                live.is_live_thread(channel.name)):
             print(f'Message not sent in a [LIVE] forum post')
             return
     

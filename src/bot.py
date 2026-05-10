@@ -4,6 +4,8 @@ from handlers import thread_create, message_create, message_edit, message_delete
 from services import sheets
 from utils.config import BOT_TOKEN
 
+assert BOT_TOKEN is not None
+
 # Setup bot
 intents = discord.Intents.default()
 intents.message_content = True

@@ -6,6 +6,9 @@ from googleapiclient.discovery import build, Resource
 
 from utils.config import GOOGLE_SHEETS_API_JSON_FILE_PATH, GOOGLE_SPREADSHEET_ID
 
+assert GOOGLE_SHEETS_API_JSON_FILE_PATH is not None
+assert GOOGLE_SPREADSHEET_ID is not None
+
 MANILA_TIMEZONE = ZoneInfo('Asia/Manila')
 
 SCOPES = (
