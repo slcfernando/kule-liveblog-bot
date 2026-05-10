@@ -63,11 +63,12 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
         }
     ).execute()
 
-    # Make post and notes columns wider and wrap around; make status column a dropdown
+    # Adjust formatting of initialized sheet
     service.spreadsheets().batchUpdate(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         body={
             'requests': [
+                # Make post and notes columns wider
                 {
                     'updateDimensionProperties': {
                         'range': {
@@ -82,6 +83,7 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                         'fields': 'pixelSize'
                     }
                 },
+                # Make post and notes columns wrap around
                 {
                     'repeatCell': {
                         'range': {
@@ -97,6 +99,7 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                         'fields': 'userEnteredFormat.wrapStrategy'
                     }
                 },
+                # Add dropdowns for status
                 {
                     'setDataValidation': {
                         'range': {
@@ -116,7 +119,25 @@ def initialize_sheet(service: Resource, sheet_title: str, forum_link: str, sheet
                             'inputMessage': 'Status'
                         }
                     }
-                }
+                },
+                # Make the message ID column plaintext
+                {
+                    'repeatCell': {
+                        'range': {
+                            'sheetId': sheet_id,
+                            'startColumnIndex': 1,
+                            'endColumnIndex': 2,
+                        },
+                        'cell': {
+                            'userEnteredFormat': {
+                                'numberFormat': {
+                                    'type': 'TEXT'
+                                }
+                            }
+                        },
+                        'fields': 'userEnteredFormat.numberFormat'
+                    }
+                },
             ]
         }
     ).execute()
@@ -127,8 +148,8 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
     CELL_RANGE = f"'{sheet_title}'!A1"
     VALUES = [
         [
-            message.id,
-            message.created_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f'),
+            str(message.id),
+            message.created_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S'),
             '',
             message.jump_url,
             message.author.name,
@@ -150,17 +171,46 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
 
     print(f'Added entry to sheet')
 
-# def edit_sheet_entry(service: Resource, sheet_title: str, message_id: int, new_message: Message):
-#     CELL_RANGE = f"'{sheet_title}'!A1"
-#     VALUES = [
-#         [
-#             message.created_at.astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S.%f'),
-#             '',
-#             message.jump_url,
-#             message.author.name,
-#             message.content
-#             '',
-#             '',
-#             'FOR EDITING'
-#         ]
-#     ]
+def find_row_by_message_id(service: Resource, sheet_title: str, id_to_search: str) -> int | None:
+    result = (service.spreadsheets()
+                      .values()
+                      .get(spreadsheetId=GOOGLE_SPREADSHEET_ID, range=f"{sheet_title}!A5:A")
+                      .execute()
+            )
+    
+    messageIds = [row[0] for row in result.get('values', [])]
+    for index, messageId in enumerate(messageIds):
+        if messageId == id_to_search:
+            # hardcoded 5, because the actual rows of data start from row 5
+            return index + 5
+
+    return None
+
+def edit_sheet_entry(service: Resource, sheet_title: str, message_id: str, new_message: Message):
+    row_to_edit = find_row_by_message_id(service, sheet_title, message_id)
+    if row_to_edit is None:
+        print('The row to edit in the spreadsheet does not exist.')
+
+    # Modify Last Edited column
+    service.spreadsheets().values().update(
+        spreadsheetId=GOOGLE_SPREADSHEET_ID,
+        range=f"'{sheet_title}'!C{row_to_edit}",
+        valueInputOption='USER_ENTERED',
+        body={
+           'values': [
+               [f'{datetime.datetime.now().astimezone(MANILA_TIMEZONE).strftime('%H:%M:%S')}']
+           ] 
+        }
+    ).execute()
+
+    # Modify Raw Post column
+    service.spreadsheets().values().update(
+        spreadsheetId=GOOGLE_SPREADSHEET_ID,
+        range=f"'{sheet_title}'!F{row_to_edit}",
+        valueInputOption='USER_ENTERED',
+        body={
+           'values': [
+               [new_message.content]
+           ] 
+        }
+    ).execute()

@@ -3,24 +3,25 @@ from googleapiclient.discovery import Resource
 
 from services import sheets
 from utils import live
+from utils.config import GOOGLE_SPREADSHEET_ID
 
 def setup(client: Client, service: Resource):
     @client.event
     async def on_message_edit(before: Message, after: Message):
         # Ignore messages sent by the bot itself.
-        if message.author == client.user:
+        if after.author == client.user:
             return
         
-        print(f'A message was sent: {message}')
+        print(f'A message was edited: {after}')
+
         # Ignore messages not sent in a live blog forum post (which is a thread)
-        channel = message.channel
+        channel = after.channel
         if not live.is_live_thread(channel.name):
             print(f'Message not sent in a [LIVE] forum post')
             return
     
-        try:        
-            # Create new row in the spreadsheet containing the contents of the message sent
-            sheets.add_sheet_entry(service, channel.name, message)
+        try:
+            sheets.edit_sheet_entry(service, channel.name, str(before.id), after)
         except Exception as e:
             print(f'An error occured: {e}')
-            await channel.send('An error occurred while creating a new entry on the Google Sheet.')
+            await channel.send('An error occurred while editing an entry on the Google Sheet.')
