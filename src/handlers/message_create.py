@@ -20,7 +20,7 @@ def setup(client: Client, service: Resource):
             return
 
         try:
-            # Create new row in the spreadsheet containing the contents of the message sent
+            # Create new spreadsheet row containing contents of message sent
             sheets.add_sheet_entry(service, channel.name, message)
         except Exception as e:
             print(f"An error occured: {e}")

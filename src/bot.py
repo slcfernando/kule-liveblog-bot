@@ -1,6 +1,6 @@
 import discord
-from handlers import thread_create, message_create, message_edit, message_delete
 
+from handlers import message_create, message_delete, message_edit, thread_create
 from services import sheets
 from utils.config import BOT_TOKEN
 

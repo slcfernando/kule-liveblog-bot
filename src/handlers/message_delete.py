@@ -25,5 +25,5 @@ def setup(client: Client, service: Resource):
         except Exception as e:
             print(f"An error occured: {e}")
             await channel.send(
-                "An error occurred while marking an entry as deleted on the Google Sheet."
+                "An error occurred while marking entry as deleted on the Google Sheet."
             )

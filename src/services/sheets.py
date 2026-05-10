@@ -1,8 +1,9 @@
 import datetime
 from zoneinfo import ZoneInfo
+
 from discord import Message
 from google.oauth2 import service_account
-from googleapiclient.discovery import build, Resource
+from googleapiclient.discovery import Resource, build
 
 from utils.config import GOOGLE_SHEETS_API_JSON_FILE_PATH, GOOGLE_SPREADSHEET_ID
 
