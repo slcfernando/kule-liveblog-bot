@@ -3,6 +3,7 @@ from googleapiclient.discovery import Resource
 
 from services import sheets
 from utils import live
+from handlers import bot_commands
 
 
 def setup(client: Client, service: Resource):
@@ -13,8 +14,20 @@ def setup(client: Client, service: Resource):
             return
 
         print(f"A message was sent: {message}")
-        # Ignore messages not sent in a live blog forum post (which is a thread)
+
+        # Confirm if the bot is active
         channel = message.channel
+        if message.content == '$ready':
+            await bot_commands.ready(channel)
+            return
+
+        # Help for how to use the bot
+        channel = message.channel
+        if message.content == '$help':
+            await bot_commands.help(channel)
+            return
+
+        # Ignore messages not sent in a live blog forum post (which is a thread)
         if not (isinstance(channel, Thread) and live.is_live_thread(channel.name)):
             print("Message not sent in a [LIVE] forum post")
             return
