@@ -24,7 +24,7 @@ def setup(client: Client, service: Resource):
         # Help for how to use the bot
         channel = message.channel
         if message.content == '$help':
-            await bot_commands.help(channel)
+            await bot_commands.help(cwhannel)
             return
 
         # Ignore messages not sent in a live blog forum post (which is a thread)
