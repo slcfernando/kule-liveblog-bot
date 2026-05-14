@@ -1,9 +1,9 @@
 from discord import Client, Message, Thread
 from googleapiclient.discovery import Resource
 
+from handlers import bot_commands
 from services import sheets
 from utils import live
-from handlers import bot_commands
 
 
 def setup(client: Client, service: Resource):
