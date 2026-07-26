@@ -1,9 +1,11 @@
 import datetime
+import time
 from zoneinfo import ZoneInfo
 
 from discord import Message
 from google.oauth2 import service_account
 from googleapiclient.discovery import Resource, build
+from googleapiclient.errors import HttpError
 
 from utils.config import GOOGLE_SHEETS_API_JSON_FILE_PATH, GOOGLE_SPREADSHEET_ID
 
@@ -13,6 +15,25 @@ assert GOOGLE_SPREADSHEET_ID is not None
 MANILA_TIMEZONE = ZoneInfo("Asia/Manila")
 
 SCOPES = ("https://www.googleapis.com/auth/spreadsheets",)
+
+
+def execute_with_retry(request, retries: int = 3, delay: float = 2.0):
+    """Execute a Google API request with simple retry logic."""
+    for attempt in range(retries):
+        try:
+            return request.execute()
+        except HttpError as e:
+            if e.resp.status in (429, 500, 503) and attempt < retries - 1:
+                print(f"API error {e.resp.status}, retrying in {delay}s (attempt {attempt + 1}/{retries})")
+                time.sleep(delay)
+            else:
+                raise
+        except Exception as e:
+            if attempt < retries - 1:
+                print(f"Request failed: {e}, retrying in {delay}s (attempt {attempt + 1}/{retries})")
+                time.sleep(delay)
+            else:
+                raise
 
 
 def authenticate_sheets_api() -> Resource:
@@ -29,10 +50,9 @@ def create_sheet(service: Resource, sheet_title: str):
         "requests": [{"addSheet": {"properties": {"title": sheet_title, "index": 0}}}]
     }
 
-    response = (
+    response = execute_with_retry(
         service.spreadsheets()
         .batchUpdate(spreadsheetId=GOOGLE_SPREADSHEET_ID, body=body)
-        .execute()
     )
 
     print("Created new sheet")
@@ -65,15 +85,16 @@ def initialize_sheet(
     ]
 
     # Add metadata and column headers
-    service.spreadsheets().values().update(
+    execute_with_retry(
+        service.spreadsheets().values().update(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         range=FULL_CELL_RANGE,
         valueInputOption="USER_ENTERED",
         body={"values": VALUES},
-    ).execute()
+    ))
 
     # Adjust formatting of initialized sheet
-    service.spreadsheets().batchUpdate(
+    execute_with_retry(service.spreadsheets().batchUpdate(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         body={
             "requests": [
@@ -268,7 +289,7 @@ def initialize_sheet(
                 },
             ]
         },
-    ).execute()
+    ))
 
     print("Initialized sheet")
 
@@ -289,12 +310,12 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
         ]
     ]
 
-    service.spreadsheets().values().append(
+    execute_with_retry(service.spreadsheets().values().append(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         range=CELL_RANGE,
         valueInputOption="USER_ENTERED",
         body={"values": VALUES},
-    ).execute()
+    ))
 
     print("Added entry to sheet")
 
@@ -302,11 +323,10 @@ def add_sheet_entry(service: Resource, sheet_title: str, message: Message):
 def find_row_by_message_id(
     service: Resource, sheet_title: str, id_to_search: str
 ) -> int | None:
-    result = (
+    result = execute_with_retry(
         service.spreadsheets()
         .values()
         .get(spreadsheetId=GOOGLE_SPREADSHEET_ID, range=f"{sheet_title}!A5:A")
-        .execute()
     )
     rows = result.get("values", [])
     if not rows:
@@ -330,7 +350,7 @@ def edit_sheet_entry(
         print("The row to edit in the spreadsheet does not exist.")
         return None
 
-    service.spreadsheets().values().batchUpdate(
+    execute_with_retry(service.spreadsheets().values().batchUpdate(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         body={
             "valueInputOption": "USER_ENTERED",
@@ -351,7 +371,7 @@ def edit_sheet_entry(
                 },
             ],
         },
-    ).execute()
+    ))
 
 
 def delete_sheet_entry(service: Resource, sheet_title: str, message: Message):
@@ -360,7 +380,7 @@ def delete_sheet_entry(service: Resource, sheet_title: str, message: Message):
         print("The row to delete in the spreadsheet does not exist.")
         return None
 
-    service.spreadsheets().values().batchUpdate(
+    execute_with_retry(service.spreadsheets().values().batchUpdate(
         spreadsheetId=GOOGLE_SPREADSHEET_ID,
         body={
             "valueInputOption": "USER_ENTERED",
@@ -371,6 +391,6 @@ def delete_sheet_entry(service: Resource, sheet_title: str, message: Message):
                 }
             ],
         },
-    ).execute()
+    ))
 
     print(f"Marked row {row_to_delete} as DELETED")
