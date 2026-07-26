@@ -313,12 +313,12 @@ def find_row_by_message_id(
         print(f"No data rows yet in {sheet_title}")
         return None
 
-    messageIds = [row[0] for row in rows]
-    for index, messageId in enumerate(messageIds):
-        if messageId == id_to_search:
+    for index, row in enumerate(rows):
+        if row and row[0] == id_to_search:
             # hardcoded 5, because the actual rows of data start from row 5
             return index + 5
 
+    print(f"Message ID {id_to_search} not found in {sheet_title}")
     return None
 
 
