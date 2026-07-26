@@ -1,4 +1,6 @@
 import datetime
+import json
+import os
 import time
 from zoneinfo import ZoneInfo
 
@@ -37,9 +39,21 @@ def execute_with_retry(request, retries: int = 3, delay: float = 2.0):
 
 
 def authenticate_sheets_api() -> Resource:
-    creds = service_account.Credentials.from_service_account_file(
-        GOOGLE_SHEETS_API_JSON_FILE_PATH, scopes=SCOPES
-    )
+    credentials_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    
+    if credentials_json:
+        # If on Railway, load from environment variable
+        credentials_info = json.loads(credentials_json)
+        creds = service_account.Credentials.from_service_account_info(
+            credentials_info, scopes=SCOPES
+        )
+    else:
+        # If local, load from file
+        assert GOOGLE_SHEETS_API_JSON_FILE_PATH is not None
+        creds = service_account.Credentials.from_service_account_file(
+            GOOGLE_SHEETS_API_JSON_FILE_PATH, scopes=SCOPES
+        )
+    
     service = build("sheets", "v4", credentials=creds)
     print("Completed setup of Google Sheets API")
     return service
