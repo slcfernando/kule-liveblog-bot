@@ -17,13 +17,13 @@ def setup(client: Client, service: Resource):
 
         # Confirm if the bot is active
         channel = message.channel
-        if message.content == '$ready':
+        if message.content == "$ready":
             await bot_commands.ready(channel)
             return
 
         # Help for how to use the bot
         channel = message.channel
-        if message.content == '$help':
+        if message.content == "$help":
             await bot_commands.help(channel)
             return
 

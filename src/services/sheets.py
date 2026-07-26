@@ -365,14 +365,12 @@ def delete_sheet_entry(service: Resource, sheet_title: str, message: Message):
         body={
             "valueInputOption": "USER_ENTERED",
             "data": [
-                # Modify Message ID column
-                {"range": f"'{sheet_title}'!A{row_to_delete}", "values": [["DELETED"]]},
-                # Modify Message Link column
-                {"range": f"'{sheet_title}'!D{row_to_delete}", "values": [["DELETED"]]},
-                # Modify Notes column
-                {"range": f"'{sheet_title}'!H{row_to_delete}", "values": [["DELETED"]]},
-                # Modify Status
-                {"range": f"'{sheet_title}'!I{row_to_delete}", "values": [["DELETED"]]},
+                {
+                    "range": f"'{sheet_title}'!I{row_to_delete}",
+                    "values": [["DELETED"]],
+                }
             ],
         },
     ).execute()
+
+    print(f"Marked row {row_to_delete} as DELETED")
