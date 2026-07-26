@@ -1,0 +1,1 @@
+worker: uv run src/bot.py
