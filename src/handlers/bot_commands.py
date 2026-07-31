@@ -49,3 +49,10 @@ async def help(channel: Channel):
         await channel.send(HELP_MESSAGE)
     except Exception as e:
         print(f"An error occurred while the bot tried to send a message: {e}")
+
+
+async def test(channel: Channel):
+    try:
+        await channel.send("Balik ka na Gab!!! 😭😭😭")
+    except Exception as e:
+        print(f"An error occurred while the bot tried to send a message: {e}")

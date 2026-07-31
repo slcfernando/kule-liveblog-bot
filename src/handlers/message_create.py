@@ -18,7 +18,7 @@ def setup(client: Client, service: Resource):
         # Confirm if the bot is active
         channel = message.channel
         if message.content == "$ready":
-            await bot_commands.ready(channel)
+            await bot_commands.test(channel)
             return
 
         # Help for how to use the bot
