@@ -2,6 +2,7 @@ from discord import (
     DMChannel,
     GroupChannel,
     PartialMessageable,
+    Message,
     StageChannel,
     TextChannel,
     Thread,
@@ -48,6 +49,9 @@ LIVE_INSTRUCTIONS = """**Do not send anything here other than posts for editing.
 """
 
 
+COMMS_INSTRUCTIONS = """Use this COMMS thread for communications. Send posts for editing in <LIVE URL>. 
+"""
+
 async def ready(channel: Channel):
     try:
         await channel.send(READY_MESSAGE)
@@ -71,8 +75,10 @@ async def test(channel: Channel):
         print(f"An error occurred while the bot tried to send a message: {e}")
 
 
-async def send_live_instructions(thread: Thread, comms_url: str) -> None:
+async def send_live_instructions(thread: Thread, comms_url: str) -> Message | None:
     try:
-        await thread.send(LIVE_INSTRUCTIONS.replace("<COMMS URL>", comms_url))
+        live_instructions = await thread.send(LIVE_INSTRUCTIONS.replace("<COMMS URL>", comms_url))
+        return live_instructions
     except Exception as e:
         print(f"Failed to send instructions to {thread.name}: {e}")
+        return

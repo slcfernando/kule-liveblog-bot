@@ -31,10 +31,18 @@ def setup(client: Client, service: Resource):
                 name=comms_name,
                 type=discord.ChannelType.public_thread,
             )
-            await comms_thread.send(f"This is the COMMS thread for {thread.jump_url}.")
+            comms_instructions = await comms_thread.send(bot_commands.COMMS_INSTRUCTIONS.replace("<LIVE URL>", thread.jump_url))
+
+            # Pin [COMMS] instructions
+            await comms_instructions.pin()
+
+            # Mention [LIVE] thread creator in [COMMS]
+            await comms_thread.send(f"Adding [LIVE] thread creator @{thread.owner}.")
 
             # Send instructions to the [LIVE] thread
-            await bot_commands.send_live_instructions(thread, comms_thread.jump_url)
+            live_instructions = await bot_commands.send_live_instructions(thread, comms_thread.jump_url)
+            if live_instructions:
+                await live_instructions.pin()
 
         except Exception as e:
             print(f"An error occured: {e}")

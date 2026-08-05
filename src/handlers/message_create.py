@@ -69,7 +69,7 @@ async def _handle_live_message(
         mention_list = " ".join(m.mention for m in message.mentions)
         # Include the actual message sender in the mention list.
         mention_list += f" {message.author}"
-        await comms_thread.send(f"Adding {mention_list} from **{channel.name}**")
+        await comms_thread.send(f"Adding from [COMMS] thread:\n{mention_list}")
         print(f"Relayed mentions to [COMMS] thread {comms_name}")
         return
 
