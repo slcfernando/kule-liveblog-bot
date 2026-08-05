@@ -46,22 +46,19 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
         )
         return
 
-    if last_message_id is None:
-        print("last_message_id is None.")
-        return
-
-    after_snowflake = discord.Object(id=int(last_message_id))
+    after_snowflake = (
+        discord.Object(id=int(last_message_id)) if last_message_id is not None else None
+    )
     missed_messages = []
 
     try:
         async for message in thread.history(
-            limit=100, after=after_snowflake, oldest_first=True
+            limit=None, after=after_snowflake, oldest_first=True
         ):
             if message.author == client.user:
                 print(f"Skipped own bot message: {message.content}")
                 continue
             missed_messages.append(message)
-
     except Exception as e:
         print(
             f"An error occurred while getting missed messages in thread {thread.name}: {e}"
@@ -77,7 +74,7 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
             # Skip messages that mention users
             if live.is_mention_only(message):
                 continue
-            
+
             sheets.add_sheet_entry(service, thread.name, message)
             # TODO: It would be nice if the bot reacts to messages that are added to the sheet
             recovered_count += 1
