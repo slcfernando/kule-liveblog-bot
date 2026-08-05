@@ -28,7 +28,8 @@ async def recover_missed_messages(client: Client, service: Resource) -> None:
 async def _recover_thread(thread: Thread, service: Resource, client: Client):
     try:
         last_message_id = sheets.get_last_message_id(service, thread.name)
-    except Exception:
+    except Exception as e:
+        print(f"An error occurred while getting the last message ID in thread {thread.name}: {e}")
         return
 
     if last_message_id is None:
@@ -42,9 +43,10 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
             limit=100, after=after_snowflake, oldest_first=True
         ):
             if message.author == client.user:
-                continue
                 missed_messages.append(message)
-    except Exception:
+                continue
+    except Exception as e:
+        print(f"An error occurred while getting missed messages in thread {thread.name}: {e}")
         return
 
     if not missed_messages:
@@ -56,7 +58,8 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
             sheets.add_sheet_entry(service, thread.name, message)
             # TODO: It would be nice if the bot reacts to messages that are added to the sheet
             recovered_count += 1
-        except Exception:
+        except Exception as e:
+            print(f"An error occurred while adding a sheet entry: {e}")
             pass
 
     await thread.send(
