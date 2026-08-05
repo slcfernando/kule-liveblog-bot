@@ -78,7 +78,9 @@ async def _handle_live_message(
             mention_list.append(member.mention)
 
         if mention_list:
-            await comms_thread.send(f"Adding from [LIVE] thread:\n{' '.join(mention_list)}")
+            await comms_thread.send(
+                f"Adding from [LIVE] thread:\n{' '.join(mention_list)}"
+            )
             print(f"Relayed mentions to [COMMS] thread {comms_name}.")
 
         return
@@ -114,5 +116,7 @@ async def _handle_comms_message(
             mention_list.append(member.mention)
 
         if mention_list:
-            await live_thread.send(f"Adding from [COMMS] thread:\n{' '.join(mention_list)}")
+            await live_thread.send(
+                f"Adding from [COMMS] thread:\n{' '.join(mention_list)}"
+            )
             print(f"Relayed mentions to [LIVE] thread {live_name}.")
