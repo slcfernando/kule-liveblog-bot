@@ -1,6 +1,12 @@
 import discord
 
-from handlers import message_create, message_delete, message_edit, thread_create
+from handlers import (
+    message_create,
+    message_delete,
+    message_edit,
+    recovery,
+    thread_create,
+)
 from services import sheets
 from utils.config import BOT_TOKEN
 
@@ -19,6 +25,7 @@ service = sheets.authenticate_sheets_api()
 @client.event
 async def on_ready():
     print(f"{client.user} is ready for live blogging")
+    await recovery.recover_missed_messages(client, service)
 
 
 if __name__ == "__main__":

@@ -53,6 +53,8 @@ async def help(channel: Channel):
 
 async def test(channel: Channel):
     try:
-        await channel.send("Maayong adlaw UP Mindanao! <:vyansablay:1526094164700168253>")
+        await channel.send(
+            "Maayong adlaw UP Mindanao! <:vyansablay:1526094164700168253>"
+        )
     except Exception as e:
         print(f"An error occurred while the bot tried to send a message: {e}")
