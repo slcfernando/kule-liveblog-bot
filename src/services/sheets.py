@@ -449,7 +449,7 @@ def get_last_message_id(service: Resource, sheet_title: str) -> str | None:
 
     rows = result.get("values", [])
     if not rows:
-        print(f"Rows seems to be empty.")
+        print("Rows seems to be empty.")
         return None
 
     for row in reversed(rows):

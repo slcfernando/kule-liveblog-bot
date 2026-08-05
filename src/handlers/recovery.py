@@ -8,20 +8,26 @@ from utils.config import DISCORD_COVERAGES_NAME
 
 
 async def recover_missed_messages(client: Client, service: Resource) -> None:
+    print("Recovery function called.")
     for guild in client.guilds:
         coverages_channel = discord.utils.get(
             guild.channels, name=DISCORD_COVERAGES_NAME
         )
 
         if coverages_channel is None:
-            print(f"Coverages channel with name {DISCORD_COVERAGES_NAME} was not found in guild {guild.name}.")
+            print(
+                f"Coverages channel with name {DISCORD_COVERAGES_NAME} was not found in guild {guild.name}."
+            )
             continue
 
         if not isinstance(coverages_channel, TextChannel):
-            print(f"Coverages channel with name {coverages_channel.name} is not a TextChannel.")
+            print(
+                f"Coverages channel with name {coverages_channel.name} is not a TextChannel."
+            )
             continue
 
-        active_threads = await guild.active_threads() 
+        active_threads = await guild.active_threads()
+        print(f"Fetched {len(active_threads)} active threads: {active_threads = }")
         for thread in active_threads:
             if thread.parent_id != coverages_channel.id:
                 continue
@@ -35,10 +41,13 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
     try:
         last_message_id = sheets.get_last_message_id(service, thread.name)
     except Exception as e:
-        print(f"An error occurred while getting the last message ID in thread {thread.name}: {e}")
+        print(
+            f"An error occurred while getting the last message ID in thread {thread.name}: {e}"
+        )
         return
 
     if last_message_id is None:
+        print("last_message_id is None.")
         return
 
     after_snowflake = discord.Object(id=int(last_message_id))
@@ -49,10 +58,14 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
             limit=100, after=after_snowflake, oldest_first=True
         ):
             if message.author == client.user:
-                missed_messages.append(message)
+                print(f"Skipped own bot message: {message.content}")
                 continue
+            missed_messages.append(message)
+
     except Exception as e:
-        print(f"An error occurred while getting missed messages in thread {thread.name}: {e}")
+        print(
+            f"An error occurred while getting missed messages in thread {thread.name}: {e}"
+        )
         return
 
     if not missed_messages:
@@ -68,6 +81,7 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
             print(f"An error occurred while adding a sheet entry: {e}")
             pass
 
-    await thread.send(
-        f"The bot was offline. {recovered_count} previous message/s have been added to the Google Sheet."
-    )
+    if recovered_count > 0:
+        await thread.send(
+            f"The bot was offline. {recovered_count} previous message/s have been added to the Google Sheet."
+        )
