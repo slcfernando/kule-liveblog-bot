@@ -28,13 +28,13 @@ HELP_MESSAGE = (
     "# How to use the live blog bot:\n"
     "- Type `$ready` in any public thread to confirm that I'm active. "
     "If not, @/Sidney.\n"
-    "- Create a **public forum post** in "
+    "- Create a **public thread** in "
     f"{DISCORD_COVERAGES_FORUM} that starts "
     "with `[LIVE]` to create a new sheet in the live blog spreadsheet.\n"
-    "- Send messages in the `[LIVE]` post so they get added to the sheet for editing. "
-    "No need to tag an editor.\n"
-    "- For communications, create a separate forum post that has the same name "
-    "but starts with `[COMMS]`."
+    "- Send messages in the `[LIVE]` thread so they get added to the sheet for editing. "
+    "Do not tag an editor.\n"
+    "- For communications, the bot will automatically create a partner thread that starts with [COMMS].\n"
+    "- Tag any person in [LIVE] and they will be added to [COMMS] automatically (and vice versa)."
 )
 
 LIVE_INSTRUCTIONS = """**Do not send anything here other than posts for editing.** Posts will automatically appear [here](https://discord.com/channels/1525773509698256928/1532688580307324939/1532767729881321754). All communications should be done via <COMMS URL>.
