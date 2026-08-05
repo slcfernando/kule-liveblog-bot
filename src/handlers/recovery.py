@@ -14,16 +14,19 @@ async def recover_missed_messages(client: Client, service: Resource) -> None:
         )
 
         if coverages_channel is None:
-            print(f"Coverages channel with name {DISCORD_COVERAGES_NAME} was not found.")
+            print(f"Coverages channel with name {DISCORD_COVERAGES_NAME} was not found in guild {guild.name}.")
             continue
 
         if not isinstance(coverages_channel, TextChannel):
             print(f"Coverages channel with name {coverages_channel.name} is not a TextChannel.")
             continue
 
-        for thread in coverages_channel.threads:
+        active_threads = await guild.fetch_active_threads() 
+        for thread in active_threads:
+            if thread.parent_id != coverages_channel.id:
+                continue
             if not live.is_live_thread(thread.name):
-                print(f"Coverages channel with name {coverages_channel.name} is not a live thread.")
+                print(f"Thread with name {thread.name} is not a live thread.")
                 continue
             await _recover_thread(thread, service, client)
 
