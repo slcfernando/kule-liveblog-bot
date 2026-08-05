@@ -80,7 +80,8 @@ async def _handle_live_message(
         if mention_list:
             await comms_thread.send(f"Adding from [LIVE] thread:\n{' '.join(mention_list)}")
             print(f"Relayed mentions to [COMMS] thread {comms_name}.")
-            return
+
+        return
 
     # All other messages without mentions get added to the live blog sheet
     try:
