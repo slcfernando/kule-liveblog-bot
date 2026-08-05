@@ -36,6 +36,17 @@ HELP_MESSAGE = (
     "but starts with `[COMMS]`."
 )
 
+LIVE_INSTRUCTIONS = """**Do not send anything here other than posts for editing.** Posts will automatically appear [here](https://discord.com/channels/1525773509698256928/1532688580307324939/1532767729881321754). All communications should be done via ⁠[COMMS] Bot Test.
+
+# Instructions:
+- All posts longer than 100 words must be accompanied by a headline (format is sentence case, ending with a period) and appropriate media (images by default, but videos, other visualizations, etc. may be deemed acceptable). The said media should appear before the body text.
+- All prewrites must be moved to this thread prior to the moment the live blog opens.
+- **For the remote member running the blog:** When publishing to the platform, make sure to paste the contents as plain text, remove all extra line breaks, and download all photos before uploading.
+- Edit the pinned briefing periodically. Switch from the opener (_"Here's what you need to know."_) to the _"Here's the latest."_ bulleted summary format once the blog is rolling.
+- Upload all videos to X first before embedding.
+- For short entries that contain media, the photo/video comes after the post's body text and an extra line break.
+"""
+
 
 async def ready(channel: Channel):
     try:
@@ -58,3 +69,10 @@ async def test(channel: Channel):
         )
     except Exception as e:
         print(f"An error occurred while the bot tried to send a message: {e}")
+
+
+async def send_live_instructions(thread: Thread) -> None:
+    try:
+        await thread.send(LIVE_INSTRUCTIONS)
+    except Exception as e:
+        print(f"Failed to send instructions to {thread.name}: {e}")
