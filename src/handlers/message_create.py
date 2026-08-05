@@ -88,7 +88,7 @@ async def _handle_live_message(
     # All other messages without mentions get added to the live blog sheet
     try:
         sheets.add_sheet_entry(service, channel.name, message)
-        await message.add_reaction("✅")
+        await message.add_reaction("👌")
     except Exception as e:
         print(f"Error adding sheet entry: {e}")
         await channel.send(
