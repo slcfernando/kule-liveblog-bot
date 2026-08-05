@@ -89,6 +89,7 @@ async def _handle_live_message(
     try:
         sheets.add_sheet_entry(service, channel.name, message)
         await message.add_reaction("👌")
+        print(f"Bot reacted with 👌")
     except Exception as e:
         print(f"Error adding sheet entry: {e}")
         await channel.send(

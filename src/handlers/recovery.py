@@ -80,10 +80,12 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
             )
             if existing_row is not None:
                 await message.add_reaction("👌")
+                print(f"Bot reacted with 👌")
                 continue
 
             sheets.add_sheet_entry(service, thread.name, message)
             await message.add_reaction("👌")
+            print(f"Bot reacted with 👌")
             recovered_count += 1
         except Exception as e:
             print(f"An error occurred while adding a sheet entry: {e}")
