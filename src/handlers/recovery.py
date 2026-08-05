@@ -4,17 +4,17 @@ from googleapiclient.discovery import Resource
 
 from services import sheets
 from utils import live
-from utils.config import DISCORD_COVERAGES_FORUM
+from utils.config import DISCORD_COVERAGES_NAME
 
 
 async def recover_missed_messages(client: Client, service: Resource) -> None:
     for guild in client.guilds:
         coverages_channel = discord.utils.get(
-            guild.channels, name=DISCORD_COVERAGES_FORUM
+            guild.channels, name=DISCORD_COVERAGES_NAME
         )
 
         if coverages_channel is None:
-            print(f"Coverages channel with name {DISCORD_COVERAGES_FORUM} was not found.")
+            print(f"Coverages channel with name {DISCORD_COVERAGES_NAME} was not found.")
             continue
 
         if not isinstance(coverages_channel, TextChannel):
