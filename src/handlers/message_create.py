@@ -6,9 +6,7 @@ from services import sheets
 from utils import live
 
 
-async def _find_thread_by_name(
-    guild_threads: list[Thread], name: str
-) -> Thread | None:
+async def _find_thread_by_name(guild_threads: list[Thread], name: str) -> Thread | None:
     for thread in guild_threads:
         if thread.name == name:
             return thread
@@ -47,7 +45,9 @@ def setup(client: Client, service: Resource):
         active_threads = await message.guild.active_threads()
 
         if is_live:
-            await _handle_live_message(message, channel, active_threads, service, client)
+            await _handle_live_message(
+                message, channel, active_threads, service, client
+            )
         elif is_comms:
             await _handle_comms_message(message, channel, active_threads, client)
 
@@ -57,7 +57,7 @@ async def _handle_live_message(
     channel: Thread,
     active_threads: list[Thread],
     service: Resource,
-    client: Client
+    client: Client,
 ):
     # TODO: If there's a mention in the live message, message will not be added to the live blog sheet
     if live.is_mention_only(message):
@@ -75,7 +75,7 @@ async def _handle_live_message(
 
             mention_list.append(member.mention)
 
-        await comms_thread.send(f"Adding from [LIVE] thread:\n{" ".join(mention_list)}")
+        await comms_thread.send(f"Adding from [LIVE] thread:\n{' '.join(mention_list)}")
         print(f"Relayed mentions to [COMMS] thread {comms_name}.")
         return
 
@@ -90,10 +90,7 @@ async def _handle_live_message(
 
 
 async def _handle_comms_message(
-    message: Message,
-    channel: Thread,
-    active_threads: list[Thread],
-    client: Client
+    message: Message, channel: Thread, active_threads: list[Thread], client: Client
 ) -> None:
     if live.is_mention_only(message):
         live_name = live.get_paired_live_name(channel.name)
@@ -110,6 +107,6 @@ async def _handle_comms_message(
 
             mention_list.append(member.mention)
 
-        await live_thread.send(f"Adding from [COMMS] thread:\n{" ".join(mention_list)}")
+        await live_thread.send(f"Adding from [COMMS] thread:\n{' '.join(mention_list)}")
         print(f"Relayed mentions to [LIVE] thread {live_name}.")
         return

@@ -15,7 +15,7 @@ def setup(client: Client, service: Resource):
             if not live.is_live_thread(thread.name):
                 print(f"Thread {thread.name} is not a [LIVE] thread.")
                 return
-            
+
             # Create new sheet in the spreadsheet using the thread's name
             sheet_id = sheets.create_sheet(service, thread.name)
             sheets.initialize_sheet(service, thread.name, thread.jump_url, sheet_id)
@@ -23,7 +23,9 @@ def setup(client: Client, service: Resource):
             # Create [COMMS] thread
             parent = thread.parent
             if not isinstance(parent, TextChannel):
-                print(f"Parent of {thread.name} is not a TextChannel. Skipping [COMMS] thread creation.")
+                print(
+                    f"Parent of {thread.name} is not a TextChannel. Skipping [COMMS] thread creation."
+                )
                 return
 
             comms_name = live.get_paired_comms_name(thread.name)
@@ -31,16 +33,22 @@ def setup(client: Client, service: Resource):
                 name=comms_name,
                 type=discord.ChannelType.public_thread,
             )
-            comms_instructions = await comms_thread.send(bot_commands.COMMS_INSTRUCTIONS.replace("<LIVE URL>", thread.jump_url))
+            comms_instructions = await comms_thread.send(
+                bot_commands.COMMS_INSTRUCTIONS.replace("<LIVE URL>", thread.jump_url)
+            )
 
             # Pin [COMMS] instructions
             await comms_instructions.pin()
 
             # Mention [LIVE] thread creator in [COMMS]
-            await comms_thread.send(f"Adding [LIVE] thread creator <@{thread.owner_id}>.")
+            await comms_thread.send(
+                f"Adding [LIVE] thread creator <@{thread.owner_id}>."
+            )
 
             # Send instructions to the [LIVE] thread
-            live_instructions = await bot_commands.send_live_instructions(thread, comms_thread.jump_url)
+            live_instructions = await bot_commands.send_live_instructions(
+                thread, comms_thread.jump_url
+            )
             if live_instructions:
                 await live_instructions.pin()
 
