@@ -59,20 +59,27 @@ async def _handle_live_message(
     service: Resource,
     client: Client
 ):
+    # TODO: If there's a mention in the live message, message will not be added to the live blog sheet
     if live.is_mention_only(message):
         comms_name = live.get_paired_comms_name(channel.name)
         comms_thread = await _find_thread_by_name(active_threads, comms_name)
         if comms_thread is None:
-            print(f"[COMMS] thread {comms_thread.name} could not be found.")
+            print(f"[COMMS] thread {comms_name} could not be found.")
             return
 
-        mention_list = " ".join(m.mention for m in message.mentions)
-        # Include the actual message sender in the mention list.
-        mention_list += f" {message.author}"
-        await comms_thread.send(f"Adding from [COMMS] thread:\n{mention_list}")
-        print(f"Relayed mentions to [COMMS] thread {comms_name}")
+        mention_list = []
+        for member in message.mentions:
+            # Skip mentioning a message in the COMMS thread if they're already there
+            if member in comms_thread.members:
+                continue
+
+            mention_list.append(member.mention)
+
+        await comms_thread.send(f"Adding from [LIVE] thread:\n{" ".join(mention_list)}")
+        print(f"Relayed mentions to [COMMS] thread {comms_name}.")
         return
 
+    # All other messages without mentions get added to the live blog sheet
     try:
         sheets.add_sheet_entry(service, channel.name, message)
     except Exception as e:
@@ -88,19 +95,21 @@ async def _handle_comms_message(
     active_threads: list[Thread],
     client: Client
 ) -> None:
-    if not message.mentions:
-        print(f"Message with content {message.content} has no mentions.")
-        return
+    if live.is_mention_only(message):
+        live_name = live.get_paired_live_name(channel.name)
+        live_thread = await _find_thread_by_name(active_threads, live_name)
+        if live_thread is None:
+            print(f"[LIVE] thread {live_name} could not be found.")
+            return
 
-    live_name = live.get_paired_live_name(channel.name)
-    live_thread = await _find_thread_by_name(active_threads, live_name)
-    if live_thread is None:
-        print(f"Could not find [LIVE] thread with name {live_name}.")
-        return
+        mention_list = []
+        for member in message.mentions:
+            # Skip mentioning a message in the LIVE thread if they're already there
+            if member in live_thread.members:
+                continue
 
-    for member in message.mentions:
-        try:
-            await live_thread.add_user(member)
-            print(f"Added {member.name} to {live_name} from mention in {channel.name}.")
-        except Exception as e:
-            print(f"Failed to add {member.name} to {live_name}: {e}")
+            mention_list.append(member.mention)
+
+        await live_thread.send(f"Adding from [COMMS] thread:\n{" ".join(mention_list)}")
+        print(f"Relayed mentions to [LIVE] thread {live_name}.")
+        return
