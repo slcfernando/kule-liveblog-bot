@@ -74,6 +74,10 @@ async def _recover_thread(thread: Thread, service: Resource, client: Client):
     recovered_count = 0
     for message in missed_messages:
         try:
+            # Skip messages that mention users
+            if live.is_mention_only(message):
+                continue
+            
             sheets.add_sheet_entry(service, thread.name, message)
             # TODO: It would be nice if the bot reacts to messages that are added to the sheet
             recovered_count += 1
