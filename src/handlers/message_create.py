@@ -68,11 +68,13 @@ async def _handle_live_message(
             return
 
         mention_list = []
+        comms_thread_members = await comms_thread.fetch_members()
+        print(f"Fetched {len(comms_thread_members)} members from '{comms_name}'")
+        thread_member_ids = {tm.id for tm in comms_thread_members}
         for member in message.mentions:
             # Skip mentioning a message in the COMMS thread if they're already there
-            if member in comms_thread.members:
+            if member.id in thread_member_ids:
                 continue
-
             mention_list.append(member.mention)
 
         await comms_thread.send(f"Adding from [LIVE] thread:\n{' '.join(mention_list)}")
@@ -100,11 +102,13 @@ async def _handle_comms_message(
             return
 
         mention_list = []
+        live_thread_members = await live_thread.fetch_members()
+        print(f"Fetched {len(live_thread_members)} members from '{live_name}'")
+        thread_member_ids = {tm.id for tm in live_thread_members}
         for member in message.mentions:
             # Skip mentioning a message in the LIVE thread if they're already there
-            if member in live_thread.members:
+            if member.id in thread_member_ids:
                 continue
-
             mention_list.append(member.mention)
 
         await live_thread.send(f"Adding from [COMMS] thread:\n{' '.join(mention_list)}")

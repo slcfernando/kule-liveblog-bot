@@ -38,7 +38,6 @@ HELP_MESSAGE = (
 )
 
 LIVE_INSTRUCTIONS = """**Do not send anything here other than posts for editing.** Posts will automatically appear [here](https://discord.com/channels/1525773509698256928/1532688580307324939/1532767729881321754). All communications should be done via <COMMS URL>.
-
 # Instructions:
 - All posts longer than 100 words must be accompanied by a headline (format is sentence case, ending with a period) and appropriate media (images by default, but videos, other visualizations, etc. may be deemed acceptable). The said media should appear before the body text.
 - All prewrites must be moved to this thread prior to the moment the live blog opens.

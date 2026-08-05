@@ -15,6 +15,7 @@ assert BOT_TOKEN is not None
 # Setup bot
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 client = discord.Client(intents=intents)
 
 # Connect to Google Sheets API
