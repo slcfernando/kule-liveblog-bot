@@ -21,7 +21,7 @@ async def recover_missed_messages(client: Client, service: Resource) -> None:
             print(f"Coverages channel with name {coverages_channel.name} is not a TextChannel.")
             continue
 
-        active_threads = await guild.fetch_active_threads() 
+        active_threads = await guild.active_threads() 
         for thread in active_threads:
             if thread.parent_id != coverages_channel.id:
                 continue
