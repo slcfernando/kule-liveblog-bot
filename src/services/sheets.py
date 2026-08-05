@@ -454,8 +454,7 @@ def get_last_message_id(service: Resource, sheet_title: str) -> str | None:
 
     for row in reversed(rows):
         print(f"{row = }")
-        # TODO: Confirm if row[0] != "DELETED" is the correct change; diba last entry dapat?
-        if row and row[0] and row[0] != "DELETED":
+        if row and row[0]:
             return row[0]
 
     return None
