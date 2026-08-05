@@ -37,7 +37,7 @@ def setup(client: Client, service: Resource):
             await comms_instructions.pin()
 
             # Mention [LIVE] thread creator in [COMMS]
-            await comms_thread.send(f"Adding [LIVE] thread creator @{thread.owner}.")
+            await comms_thread.send(f"Adding [LIVE] thread creator <@{thread.owner_id}>.")
 
             # Send instructions to the [LIVE] thread
             live_instructions = await bot_commands.send_live_instructions(thread, comms_thread.jump_url)
